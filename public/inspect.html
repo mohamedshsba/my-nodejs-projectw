@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inspect</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    h1 {
+      color: #333;
+    }
+    p {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Inspect Page</h1>
+  <p>Codes used for Physics (ph.html): <span id="physics-count">0</span></p>
+  <p>Codes used for Chemistry (chem.html): <span id="chemistry-count">0</span></p>
+
+  <script>
+    async function fetchCodeUsageCounts() {
+      try {
+        const response = await fetch('http://localhost:3000/api/getCodeUsageCounts');
+        const data = await response.json();
+
+        // Update the counts on the page
+        document.getElementById('physics-count').textContent = data.ph || 0;
+        document.getElementById('chemistry-count').textContent = data.chem || 0;
+      } catch (error) {
+        console.error('Error fetching code usage counts:', error);
+      }
+    }
+
+    // Fetch counts when the page loads
+    fetchCodeUsageCounts();
+  </script>
+</body>
+</html>

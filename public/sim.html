@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sim Page</title>
+  <style>
+    /* Global Style */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #8e44ad, #3498db);
+      color: white;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 10px;
+      padding: 20px;
+      width: 90%;
+      max-width: 800px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      position: relative;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .images {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .images img {
+      width: 45%;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .images img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+    }
+
+    #host-button {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: #e74c3c;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    #host-button:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Sim Page</h1>
+    <button id="host-button" onclick="goToHost()">Host</button>
+    <div class="images">
+      <img src="photo1.jpg" alt="Physics Photo" onclick="goToPage('ph.html')">
+      <img src="photo2.jpg" alt="Chemistry Photo" onclick="goToPage('chem.html')">
+    </div>
+  </div>
+
+  <script>
+    // Display Host Button for Admin
+    window.onload = function () {
+      const userEmail = localStorage.getItem('userEmail'); // Retrieve email from local storage
+      console.log("Logged in as:", userEmail); // Debug: Display stored email in console
+
+      // Show host button only if the logged-in user is admin
+      if (userEmail && userEmail.toLowerCase() === 'admin123@gmail.com') {
+        document.getElementById('host-button').style.display = 'block';
+      }
+    };
+
+    // Redirect to Host Page
+    function goToHost() {
+      window.location.href = "host.html"; // Redirect to host.html
+    }
+
+    // Redirect to Specific Page without Code Verification
+    function goToPage(page) {
+      window.location.href = page; // Directly redirect to the specified page
+    }
+  </script>
+</body>
+</html>
