@@ -471,7 +471,13 @@ app.post('/save-code', (req, res) => {
 });
 
 
-    
+try {
+  // your code
+} catch (error) {
+  console.error('Error occurred:', error);
+  return { statusCode: 500, body: 'Internal Server Error' };
+}
+   
     // Now you can use `userEmail` in your app
 
 
