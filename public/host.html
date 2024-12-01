@@ -41,35 +41,26 @@
     <h2>Host Dashboard</h2>
     <div class="button-container">
       <button class="host-button" onclick="window.location.href='view.html'">View Codes</button>
-      <button class="host-button" onclick="window.location.href= 'inspect.html'">Inspect</button>
+      <button class="host-button" onclick="req()">Inspect</button>
+      <button class="host-button" onclick="acc()">acount </button>
     </div>
   </div>
 
   <script>
-    function hostAction() {
-      // Action for inspecting the system (e.g., log message)
-      alert('Inspecting the system...');
-    }
-    
-  (function detectInspect() {
-    let isDevToolsOpen = false;
-
-    // Function to check if dev tools are open
-    const checkDevTools = () => {
-      const widthThreshold = window.outerWidth - window.innerWidth > 100;
-      const heightThreshold = window.outerHeight - window.innerHeight > 100;
-      if (widthThreshold || heightThreshold) {
-        isDevToolsOpen = true;
-        window.location.href = "inspect.html"; // Redirect to inspect.html
-      } else {
-        isDevToolsOpen = false;
-      }
-    };
-
-    // Periodically check for developer tools being opened
-    setInterval(checkDevTools, 500);
-  })();
-
+function acc (){
+  const pass = "123";
+  ep=prompt("enter password")
+  if ( pass === ep ){
+    window.location.href = 'acc.html'
+  }
+}
+function req(){
+  const pass = "123";
+  ep=prompt("enter password")
+  if ( pass === ep ){
+    window.location.href = 'inspect.html'
+  }
+}
   </script>
 </body>
 </html>

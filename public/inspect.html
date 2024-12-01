@@ -1,43 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Inspect</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    p {
-      font-size: 18px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inspect Codes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .codes-section {
+            margin-top: 20px;
+            text-align: left;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .codes-count {
+            margin-top: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .reset-button {
+            background-color: #e74c3c;
+        }
+
+        .reset-button:hover {
+            background-color: #c0392b;
+        }
+
+    </style>
 </head>
 <body>
-  <h1>Inspect Page</h1>
-  <p>Codes used for Physics (ph.html): <span id="physics-count">0</span></p>
-  <p>Codes used for Chemistry (chem.html): <span id="chemistry-count">0</span></p>
 
-  <script>
-    async function fetchCodeUsageCounts() {
-      try {
-        const response = await fetch('http://localhost:3000/api/getCodeUsageCounts');
-        const data = await response.json();
+    <div class="container">
+        <h1>Used Codes</h1>
 
-        // Update the counts on the page
-        document.getElementById('physics-count').textContent = data.ph || 0;
-        document.getElementById('chemistry-count').textContent = data.chem || 0;
-      } catch (error) {
-        console.error('Error fetching code usage counts:', error);
-      }
-    }
+        <!-- PH Codes Section -->
+        <div class="codes-section">
+            <h2>Physics Codes</h2>
+            <div id="phCodesCount" class="codes-count">
+                <!-- Number of PH codes will appear here -->
+            </div>
+            <button class="reset-button" onclick="resetPhysicsCodes()">Reset Physics Codes</button>
+        </div>
 
-    // Fetch counts when the page loads
-    fetchCodeUsageCounts();
-  </script>
+        <!-- Chem Codes Section -->
+        <div class="codes-section">
+            <h2>Chemistry Codes</h2>
+            <div id="chemCodesCount" class="codes-count">
+                <!-- Number of Chem codes will appear here -->
+            </div>
+            <button class="reset-button" onclick="resetChemistryCodes()">Reset Chemistry Codes</button>
+        </div>
+
+        <button onclick="goBack()">Go Back</button>
+    </div>
+
+    <script>
+        // Fetch the number of used codes from the server
+        fetch('/get-codes-count')
+            .then(response => response.json())
+            .then(data => {
+                // Display the number of PH codes
+                document.getElementById('phCodesCount').textContent = `Physics Codes = ${data.phCodesCount}`;
+
+                // Display the number of Chem codes
+                document.getElementById('chemCodesCount').textContent = `Chemistry Codes = ${data.chemCodesCount}`;
+            })
+            .catch(error => {
+                console.error('Error fetching codes count:', error);
+            });
+
+        // Function to go back to previous page (e.g., sim.html)
+        function goBack() {
+            window.history.back();
+        }
+
+        // Function to reset Physics codes in the database
+        function resetPhysicsCodes() {
+            if (confirm('Are you sure you want to reset Physics codes? This will delete all used codes for Physics.')) {
+                fetch('/reset-physics-codes', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                     
+                        location.reload();  // Reload the page to update the count
+                    })
+                    .catch(error => {
+                        console.error('Error resetting Physics codes:', error);
+                    });
+            }
+        }
+
+        // Function to reset Chemistry codes in the database
+        function resetChemistryCodes() {
+            if (confirm('Are you sure you want to reset Chemistry codes? This will delete all used codes for Chemistry.')) {
+                fetch('/reset-chemistry-codes', { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                       
+                        location.reload();  // Reload the page to update the count
+                    })
+                    .catch(error => {
+                        console.error('Error resetting Chemistry codes:', error);
+                    });
+            }
+        }
+    </script>
+
 </body>
 </html>

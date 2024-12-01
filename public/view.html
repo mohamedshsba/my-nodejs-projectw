@@ -107,7 +107,7 @@
       });
       const result = await response.json();
       if (response.ok) {
-        alert(`New code added: ${result.code}`);
+     //   alert(`New code added: ${result.code}`);
         loadCodes(); // Reload the codes after adding a new one
       } else {
         alert(result.error);

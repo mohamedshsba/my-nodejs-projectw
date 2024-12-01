@@ -1,202 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Videos</title>
-  <style>
-    
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
 
-  .container {
-    max-width: 800px;
-    margin: 50px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  }
+        h1 {
+            margin-bottom: 20px;
+        }
 
-  h2 {
-    text-align: center;
-    color: #444;
-  }
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
 
-  /* Video Links */
-  .video-links {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin: 20px 0;
-  }
+        button {
+            background-color: #5b77e0;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
 
-  .video-links a {
-    text-decoration: none;
-    background-color: #007BFF;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: bold;
-    transition: background-color 0.3s;
-  }
+        button:hover {
+            background-color: #4a66cb;
+        }
 
-  .video-links a:hover {
-    background-color: #0056b3;
-  }
+        #valueDisplay {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
 
-  /* Code Input */
-  .code-input {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-    gap: 10px;
-  }
+        #videoPlayer {
+            display: none;
+            margin-top: 20px;
+        }
 
-  .code-input input {
-    padding: 10px;
-    width: 250px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-  }
-
-  .code-input button {
-    padding: 10px 20px;
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  .code-input button:hover {
-    background-color: #218838;
-  }
-
-  /* Video Container */
-  .video-container {
-    text-align: center;
-    margin-top: 20px;
-    position: relative;
-  }
-
-  video {
-    max-width: 100%;
-    border-radius: 8px;
-  }
-
-  /* Video Overlay */
-  .video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    font-weight: bold;
-    border-radius: 8px;
-  }
-
-  </style>
+        video {
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Choose a video to watch</h2>
-    <div class="video-links">
-      <a href="#" onclick="openVideo('v1')">Video 1</a>
-      <a href="#" onclick="openVideo('v2')">Video 2</a>
+    <h1>Select a Video</h1>
+    <div id="valueDisplay"></div>
+    <div class="button-container">
+        <button id="video1" data-video-id="1">Video 1</button>
+        <button id="video2" data-video-id="2">Video 2</button>
+        <button id="video3" data-video-id="3">Video 3</button>
     </div>
 
-    <div class="code-input" id="code-input">
-      <input type="text" id="code" placeholder="Enter your code">
-      <button onclick="verifyCode()">Submit</button>
+    <!-- Video Player -->
+    <div id="videoPlayer">
+        <video id="player" controls>
+            <source id="videoSource" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
     </div>
 
-    <div class="video-container" id="video-container" style="display:none;">
-      <video id="video-player" controls>
-        <source id="video-source" src="" type="video/mp4">
-        Your browser does not support HTML5 video.
-      </video>
-      <div class="video-overlay" id="overlay" style="display:none;">Please verify your code</div>
-    </div>
-  </div>
+    <script>
+        const userEmail = localStorage.getItem('userEmail'); // Retrieve user email from localStorage
 
-  <script>
-    let videoSelected = "";
-    const userEmail = "user@example.com"; // This should come from the logged-in user's email
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const videoId = event.target.getAttribute('data-video-id');
+                const combinedValue = userEmail + videoId;
 
-    function openVideo(video) {
-      videoSelected = video;
-      checkVideoAccess(video);
-    }
+                // Display combined value
+                document.getElementById('valueDisplay').innerText = "Combined Value: " + combinedValue;
 
-    async function checkVideoAccess(video) {
-      const response = await fetch('http://localhost:3000/api/checkVideoAccess', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, videoId: video })
-      });
+                try {
+                    const response = await fetch('/check-access', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: userEmail, videoId })
+                    });
+                    const data = await response.json();
 
-      const result = await response.json();
-      
-      if (response.ok && result.videoVerified) {
-        loadVideo(video);
-        document.getElementById('video-container').style.display = 'block';
-        document.getElementById('code-input').style.display = 'none';
-        document.getElementById('overlay').style.display = 'none';
-      } else {
-        document.getElementById('code-input').style.display = 'block';
-        document.getElementById('video-container').style.display = 'none';
-        document.getElementById('overlay').style.display = 'flex';
-      }
-    }
+                    if (data.message === 'You have accessed this video before.') {
+                        alert('You have accessed this video before.');
+                        showVideo(videoId); // Open video
+                    } else {
+                        const code = prompt('Enter the code to access the video:');
+                        if (code) {
+                            const codeResponse = await fetch('/api/verifyCode', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ code, email: userEmail, videoId })
+                            });
+                            const codeData = await codeResponse.json();
 
-    async function verifyCode() {
-      const code = document.getElementById('code').value;
+                            if (codeData.message === 'Code verified successfully, video unlocked, and access recorded.') {
+                                showVideo(videoId); // Open video
+                                ////
+                                fetch('/save-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Code saved successfully!');
+                // Clear any input field if necessary
+            })
+            .catch(error => {
+                console.error('Error saving code:', error);
+                alert('There was an error saving the code.');
+            });
+        
+                                ///
+                            } else {
+                                alert(codeData.error || 'Invalid code');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Something went wrong!');
+                }
+            });
+        });
 
-      if (!code) {
-        alert('Please enter a code!');
-        return;
-      }
+        function showVideo(videoId) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoSource = document.getElementById('videoSource');
 
-      const response = await fetch('http://localhost:3000/api/verifyCode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail, code, videoId: videoSelected })
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        alert('Code verified! Enjoy the video!');
-        loadVideo(videoSelected);
-
-        document.getElementById('code-input').style.display = 'none';
-        document.getElementById('video-container').style.display = 'block';
-        document.getElementById('overlay').style.display = 'none';
-      } else {
-        alert(result.error);
-      }
-    }
-
-    function loadVideo(video) {
-      const videoSource = document.getElementById('video-source');
-      videoSource.src = `path/to/${video}.mp4`;
-      document.getElementById('video-player').load();
-    }
-  </script>
+            videoSource.src = `videos/video_${videoId}.mp4`; // Set video source
+            videoPlayer.style.display = 'block'; // Show video player
+            videoPlayer.scrollIntoView({ behavior: 'smooth' }); // Scroll to video
+        }
+    </script>
 </body>
 </html>

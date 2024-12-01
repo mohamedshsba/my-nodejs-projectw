@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Access</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: #5b77e0;
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #4a66cb;
+        }
+
+        #valueDisplay {
+            margin-bottom: 20px;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        #videoPlayer {
+            display: none;
+            margin-top: 20px;
+        }
+
+        video {
+            width: 80%;
+            max-width: 600px;
+            border: 2px solid #fff;
+            border-radius: 10px;
+        }
+      
+    </style>
+</head>
+<body>
+    <h1>Select a Video</h1>
+    <div id="valueDisplay" ></div>
+    <div class="button-container">
+        <button id="video1" data-video-id="4">Video 1</button>
+        <button id="video2" data-video-id="5">Video 2</button>
+        <button id="video3" data-video-id="6">Video 3</button>
+    </div>
+
+    <!-- Video Player -->
+    <div id="videoPlayer">
+        <video id="player" controls>
+            <source id="videoSource" src="" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <script>
+        const userEmail = localStorage.getItem('userEmail'); // Retrieve user email from localStorage
+
+        document.querySelectorAll('button').forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const videoId = event.target.getAttribute('data-video-id');
+                const combinedValue = userEmail + videoId;
+
+                // Display combined value
+                document.getElementById('valueDisplay').innerText = "Combined Value: " + combinedValue;
+
+                try {
+                    const response = await fetch('/check-access', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: userEmail, videoId })
+                    });
+                    const data = await response.json();
+
+                    if (data.message === 'You have accessed this video before.') {
+                        alert('You have accessed this video before.');
+                        showVideo(videoId); // Open video
+                    } else {
+                        const code = prompt('Enter the code to access the video:');
+                        if (code) {
+                            const codeResponse = await fetch('/api/verifyCode', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ code, email: userEmail, videoId })
+                            });
+                            const codeData = await codeResponse.json();
+
+                            if (codeData.message === 'Code verified successfully, video unlocked, and access recorded.') {
+                                showVideo(videoId); // Open video
+                                ////
+                                fetch('/save-chem-code', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Code saved successfully!');
+                // Clear any input field if necessary
+            })
+            .catch(error => {
+                console.error('Error saving code:', error);
+                alert('There was an error saving the code.');
+            });
+        
+                                ///
+                            } else {
+                                alert(codeData.error || 'Invalid code');
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Something went wrong!');
+                }
+            });
+        });
+
+        function showVideo(videoId) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoSource = document.getElementById('videoSource');
+
+            videoSource.src = `videos/video_${videoId}.mp4`; // Set video source
+            videoPlayer.style.display = 'block'; // Show video player
+            videoPlayer.scrollIntoView({ behavior: 'smooth' }); // Scroll to video
+        }
+    </script>
+</body>
+</html>
