@@ -136,7 +136,7 @@ app.post('/reset-chemistry-codes', (req, res) => {
 ////edit
 
 // Set up SQLite database
-const db = new sqlite3.Database('./users.db', (err) => {
+const db = new sqlite3.Database('/tmp', './users.db', (err) => {
   if (err) {
     console.error('Error connecting to database:', err.message);
   } else {
